@@ -1,0 +1,97 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "CaigoScripts", HidePremium = false, SaveConfig = true, ConfigFolder = "CaigoScripts"})
+
+local Tab = Window:MakeTab({
+	Name = "Tab 1",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "ESP",
+	Callback = function()
+              print("button pressed")
+              local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function createESP(player)
+    local ESP = Drawing.new("Circle")
+    ESP.Radius = 5
+    ESP.Color = Color3.fromRGB(255, 0, 0)
+    ESP.Thickness = 2
+    ESP.Transparency = 0.5
+    ESP.Visible = false
+
+    local NameTag = Drawing.new("Text")
+    NameTag.Size = 10
+    NameTag.Color = Color3.fromRGB(255, 255, 255)
+    NameTag.Visible = false
+
+    local function updateESP()
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local position, onScreen = workspace.CurrentCamera:WorldToViewportPoint(player.Character.HumanoidRootPart.Position)
+            
+            ESP.Position = Vector2.new(position.X, position.Y)
+            ESP.Visible = onScreen
+
+            NameTag.Position = Vector2.new(position.X, position.Y + 50) -- Adjust the Y offset as needed
+            NameTag.Visible = onScreen
+            NameTag.Text = player.Name
+        else
+            ESP.Visible = false
+            NameTag.Visible = false
+        end
+    end
+    
+    game:GetService("RunService").RenderStepped:Connect(updateESP)
+end
+
+-- Loop through all the players in the game
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        createESP(player)
+    end
+end
+
+-- Update ESP for new players joining the game
+Players.PlayerAdded:Connect(function(player)
+    if player ~= LocalPlayer then
+        createESP(player)
+    end
+end)
+
+-- Remove ESP for players leaving the game
+Players.PlayerRemoving:Connect(function(player)
+    -- TODO: Remove ESP for the player that left the game
+end)
+  	end    
+})
+
+Tab:AddButton({
+	Name = "HitBox Expander",
+	Callback = function()
+       
+_G.HeadSize = 30
+_G.Disabled = true
+ 
+game:GetService('RunService').RenderStepped:connect(function()
+if _G.Disabled then
+for i,v in next, game:GetService('Players'):GetPlayers() do
+if v.Name ~= game:GetService('Players').LocalPlayer.Name then
+pcall(function()
+v.Character.HumanoidRootPart.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize)
+v.Character.HumanoidRootPart.Transparency = 0.7
+v.Character.HumanoidRootPart.BrickColor = BrickColor.new("Medium Stone Grey")
+v.Character.HumanoidRootPart.Material = "Neon"
+v.Character.HumanoidRootPart.CanCollide = false
+end)
+end
+end
+end
+end)
+  	end    
+})
+
+
+OrionLib:Init()
